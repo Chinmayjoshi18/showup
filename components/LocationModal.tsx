@@ -37,7 +37,7 @@ export default function LocationModal({ isOpen, onSelectCity, onClose }: Locatio
   if (!isOpen) return null
   
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-20 animate-fadeIn overflow-y-auto">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-md transition-all duration-300"
@@ -45,7 +45,7 @@ export default function LocationModal({ isOpen, onSelectCity, onClose }: Locatio
       />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden animate-scaleIn transform">
+      <div className="relative bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden animate-slideDown transform">
         {/* Header */}
         <div className="p-6 border-b bg-gradient-to-r from-primary-50 to-secondary-50">
           <div className="flex items-center justify-between mb-4">
@@ -81,7 +81,7 @@ export default function LocationModal({ isOpen, onSelectCity, onClose }: Locatio
         </div>
         
         {/* Cities Grid */}
-        <div className="p-6 overflow-y-auto max-h-[calc(80vh-200px)]">
+        <div className="p-6 overflow-y-auto max-h-[calc(85vh-220px)]">
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
             Popular Cities
           </h3>
