@@ -33,8 +33,27 @@ export default function AdminLoginPage() {
         return
       }
 
-      // Sign in with Firebase
-      await signInWithEmail(email, password)
+      // Try to sign in with Firebase
+      try {
+        await signInWithEmail(email, password)
+      } catch (signInError: any) {
+        // If account doesn't exist, create it automatically
+        if (signInError.code === 'auth/user-not-found') {
+          const { signUpWithEmail } = await import('@/lib/firebase/auth')
+          try {
+            await signUpWithEmail(email, password, 'Admin User')
+            // Sign in after creating account
+            await signInWithEmail(email, password)
+          } catch (createError: any) {
+            console.error('Error creating admin account:', createError)
+            setError('Failed to create admin account. Please try again.')
+            setLoading(false)
+            return
+          }
+        } else {
+          throw signInError
+        }
+      }
       
       // Store admin session
       localStorage.setItem('isAdmin', 'true')
@@ -45,11 +64,10 @@ export default function AdminLoginPage() {
     } catch (error: any) {
       console.error('Admin login error:', error)
       
-      // If account doesn't exist, create it
-      if (error.code === 'auth/user-not-found') {
-        setError('Please contact the developer to set up admin account')
-      } else if (error.code === 'auth/wrong-password') {
+      if (error.code === 'auth/wrong-password') {
         setError('Invalid admin credentials')
+      } else if (error.code === 'auth/too-many-requests') {
+        setError('Too many failed attempts. Please try again later.')
       } else {
         setError('Login failed. Please try again.')
       }
