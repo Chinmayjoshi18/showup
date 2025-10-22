@@ -1,0 +1,88 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env
+.env*.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+.firebaserc
+
+# Credentials and sensitive files
+firebase-credentials.txt
+env.example.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+
+# Scripts
+setup-firebase.sh
+setup-storage-complete.sh
+deploy-*.sh
+quick-deploy-storage.sh
+
+# Documentation (keep main README)
+FEATURES_STATUS.md
+FEATURES.md
+DATABASE_EXPANSION_PROGRESS.md
+DEPLOY_FIRESTORE_PRODUCTION.md
+FIREBASE_*.md
+FULL_WIDTH_LAYOUT.md
+JUSPAY_*.md
+MANUAL_STORAGE_SETUP.md
+MOBILE_OPTIMIZATIONS_SUMMARY.md
+NOTIFICATIONS_SYSTEM_SUMMARY.md
+OFFERS_SYSTEM_SUMMARY.md
+PAYMENT_METHODS_COMPLETE.md
+PROJECT_STRUCTURE.md
+QUICKSTART.md
+REVIEWS_SYSTEM_SUMMARY.md
+SEARCH_*.md
+SMART_CONSTRAINTS_SUMMARY.md
+STORAGE_SETUP_TROUBLESHOOTING.md
+UI_*.md
+WISHLIST_SYSTEM_SUMMARY.md
+CALENDAR_UI_IMPROVED.md
+AUTH_NOW_WORKING.md
+GAP_ANALYSIS.md
+
+# Legacy
+ShowUp/

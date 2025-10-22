@@ -1,0 +1,96 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && 
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role in ['admin', 'organizer'];
+    }
+    
+    function isValidImageSize() {
+      return request.resource.size < 5 * 1024 * 1024; // 5MB
+    }
+    
+    function isValidImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    function isValidVideo() {
+      return request.resource.contentType.matches('video/.*');
+    }
+    
+    // User profile pictures
+    match /users/{userId}/profile/{fileName} {
+      // Anyone can read profile pictures
+      allow read: if true;
+      
+      // Users can upload their own profile pictures
+      allow write: if isOwner(userId) && isValidImage() && isValidImageSize();
+      
+      // Users can delete their own profile pictures
+      allow delete: if isOwner(userId);
+    }
+    
+    // Event images and videos
+    match /events/{eventId}/{fileName} {
+      // Anyone can read event media
+      allow read: if true;
+      
+      // Only admins/organizers can upload event media
+      allow write: if isAdmin() && 
+                      (isValidImage() || isValidVideo()) && 
+                      request.resource.size < 10 * 1024 * 1024; // 10MB
+      
+      // Only admins can delete event media
+      allow delete: if isAdmin();
+    }
+    
+    // Review photos
+    match /reviews/{eventId}/{reviewId}/{fileName} {
+      // Anyone can read review photos
+      allow read: if true;
+      
+      // Signed-in users can upload review photos
+      allow write: if isSignedIn() && 
+                      isValidImage() && 
+                      isValidImageSize();
+      
+      // Users can delete their own review photos
+      allow delete: if isSignedIn();
+    }
+    
+    // Ticket QR codes
+    match /tickets/{bookingId}/{fileName} {
+      // Only authenticated users can read their own ticket QR codes
+      allow read: if isSignedIn();
+      
+      // System/backend can write ticket QR codes
+      allow write: if isSignedIn() && isValidImage();
+      
+      // No manual deletion (handled by system)
+      allow delete: if isAdmin();
+    }
+    
+    // Temporary uploads (auto-delete after 24 hours)
+    match /temp/{userId}/{fileName} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) && isValidImageSize();
+      allow delete: if isOwner(userId);
+    }
+    
+    // Default deny all
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
