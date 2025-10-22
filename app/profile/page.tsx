@@ -50,12 +50,6 @@ export default function ProfilePage() {
               <h1 className="text-3xl font-bold mb-2">Welcome back!</h1>
               <p className="text-white/90">guest@showup.com</p>
             </div>
-            <Link 
-              href="/organizer"
-              className="hidden md:block bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-6 py-3 rounded-lg font-medium transition"
-            >
-              Switch to Organizer
-            </Link>
           </div>
         </div>
       </div>

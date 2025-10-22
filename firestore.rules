@@ -12,50 +12,87 @@ service cloud.firestore {
     }
     
     function isAdmin() {
-      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'organizer'];
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    function isOrganizer() {
+      return isSignedIn() && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'organizer' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
     }
     
     function hasValidBooking(eventId) {
       return exists(/databases/$(database)/documents/bookings/$(request.auth.uid + '_' + eventId));
     }
     
-    // Users collection
+    // Users collection - With role protection
     match /users/{userId} {
-      // Anyone can read user profiles
-      allow read: if true;
+      // Anyone signed in can read user profiles
+      allow read: if isSignedIn();
       
-      // Users can only create/update their own profile
+      // Users can create their own profile
       allow create: if isSignedIn() && request.auth.uid == userId;
-      allow update: if isOwner(userId);
+      
+      // Users can update their own profile, but CANNOT change role
+      // Only admins can change roles
+      allow update: if isOwner(userId) && (
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']) ||
+        isAdmin()
+      );
       
       // Only admins can delete users
       allow delete: if isAdmin();
     }
     
-    // Events collection
+    // Events collection - With approval workflow
     match /events/{eventId} {
       // Anyone can read events
       allow read: if true;
       
-      // Only admins/organizers can create/update/delete events
+      // Organizers CANNOT directly create/update/delete events
+      // They must submit through approval workflow
+      // Only admins can manage events (after approval)
       allow create, update, delete: if isAdmin();
+    }
+    
+    // Event Approvals collection - NEW for approval workflow
+    match /eventApprovals/{approvalId} {
+      // Organizers can read their own submissions
+      // Admins can read all
+      allow read: if isAdmin() || (
+        isOrganizer() && 
+        resource.data.organizerId == request.auth.uid
+      );
+      
+      // Only organizers can submit for approval
+      allow create: if isOrganizer() && 
+        request.resource.data.organizerId == request.auth.uid &&
+        request.resource.data.status == 'pending';
+      
+      // Only admins can approve/reject (update status)
+      allow update: if isAdmin() && 
+        resource.data.status == 'pending' &&
+        request.resource.data.status in ['approved', 'rejected'];
+      
+      // No one can delete approvals (for audit trail)
+      allow delete: if false;
     }
     
     // Bookings collection
     match /bookings/{bookingId} {
-      // Users can only read their own bookings
+      // Users can read their own bookings, admins can read all
       allow read: if isSignedIn() && 
                      (resource.data.userId == request.auth.uid || isAdmin());
       
       // Users can create bookings for themselves
       allow create: if isSignedIn() && 
-                       request.resource.data.userId == request.auth.uid &&
-                       request.resource.data.paymentStatus == 'completed';
+                       request.resource.data.userId == request.auth.uid;
       
       // Users can update their own bookings (for cancellation)
+      // Admins can update any booking
       allow update: if isSignedIn() && 
-                       resource.data.userId == request.auth.uid &&
-                       request.resource.data.status == 'cancelled';
+                       (resource.data.userId == request.auth.uid || isAdmin());
       
       // Only admins can delete bookings
       allow delete: if isAdmin();
@@ -70,7 +107,7 @@ service cloud.firestore {
       allow create: if isSignedIn() && 
                        request.resource.data.userId == request.auth.uid;
       
-      // Users can update their own reviews
+      // Users can update their own reviews, admins can update any
       allow update: if isSignedIn() && 
                        (resource.data.userId == request.auth.uid || isAdmin());
       
@@ -81,23 +118,23 @@ service cloud.firestore {
     
     // Notifications collection
     match /notifications/{notificationId} {
-      // Users can only read their own notifications
+      // Users can only read their own notifications, admins can read all
       allow read: if isSignedIn() && 
-                     resource.data.userId == request.auth.uid;
+                     (resource.data.userId == request.auth.uid || isAdmin());
       
-      // Only admins/system can create notifications
+      // Only admins can create notifications
       allow create: if isAdmin();
       
       // Users can update their own notifications (mark as read)
       allow update: if isSignedIn() && 
-                       resource.data.userId == request.auth.uid;
+                       (resource.data.userId == request.auth.uid || isAdmin());
       
       // Users can delete their own notifications
       allow delete: if isSignedIn() && 
-                       resource.data.userId == request.auth.uid;
+                       (resource.data.userId == request.auth.uid || isAdmin());
     }
     
-    // Coupons collection
+    // Coupons collection - Admin only management
     match /coupons/{couponId} {
       // Anyone can read active coupons
       allow read: if true;
@@ -106,19 +143,15 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
     
-    // Analytics collection (for custom analytics)
+    // Analytics collection - Admin only
     match /analytics/{document=**} {
-      // Only admins can read analytics
-      allow read: if isAdmin();
-      
-      // System can write analytics
-      allow write: if isSignedIn();
+      // Only admins can read/write analytics
+      allow read, write: if isAdmin();
     }
     
-    // Default deny all
+    // Default deny all other collections
     match /{document=**} {
       allow read, write: if false;
     }
   }
 }
-
