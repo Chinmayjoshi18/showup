@@ -7,7 +7,8 @@ import {
   UserCheck, 
   FileCheck, 
   AlertCircle, 
-  TrendingUp, 
+  TrendingUp,
+  TrendingDown,
   DollarSign,
   Shield,
   Plus,
@@ -17,7 +18,20 @@ import {
   Filter,
   Download,
   Eye,
-  Ban
+  Ban,
+  BarChart3,
+  PieChart,
+  Calendar,
+  Clock,
+  Star,
+  Ticket,
+  MapPin,
+  Mail,
+  Phone,
+  Globe,
+  Activity,
+  Zap,
+  Award
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
@@ -40,7 +54,7 @@ export default function AdminPage() {
   const { user, loading } = useAuth()
   const [isAdmin, setIsAdmin] = useState(false)
   const [checkingAdmin, setCheckingAdmin] = useState(true)
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'organizers' | 'approvals'>('overview')
+  const [activeView, setActiveView] = useState<'overview' | 'users' | 'organizers' | 'approvals' | 'analytics' | 'bookings'>('overview')
   
   // Data states
   const [users, setUsers] = useState<UserProfile[]>([])
@@ -64,7 +78,6 @@ export default function AdminPage() {
   useEffect(() => {
     const checkAdminAccess = async () => {
       if (!loading && user) {
-        // Quick email check first
         if (user.email !== ADMIN_EMAIL) {
           router.push('/')
           return
@@ -141,7 +154,6 @@ export default function AdminPage() {
         setNewOrganizerOrg('')
         setShowAddOrganizer(false)
         
-        // Reload data
         const [usersData, organizersData] = await Promise.all([
           getAllUsers(),
           getAllOrganizers()
@@ -161,7 +173,7 @@ export default function AdminPage() {
   const handleRemoveOrganizer = async (organizerUid: string) => {
     if (!user) return
     
-    if (!confirm('Are you sure you want to remove this organizer role? They will become a regular customer.')) {
+    if (!confirm('Are you sure you want to remove this organizer role?')) {
       return
     }
     
@@ -171,7 +183,6 @@ export default function AdminPage() {
       if (result.success) {
         setMessage({ type: 'success', text: result.message })
         
-        // Reload data
         const [usersData, organizersData] = await Promise.all([
           getAllUsers(),
           getAllOrganizers()
@@ -200,7 +211,6 @@ export default function AdminPage() {
       if (result.success) {
         setMessage({ type: 'success', text: result.message })
         
-        // Reload approvals
         const approvalsData = await getPendingApprovals()
         setPendingApprovals(approvalsData)
       } else {
@@ -215,7 +225,7 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Verifying admin access...</p>
         </div>
       </div>
@@ -223,14 +233,18 @@ export default function AdminPage() {
   }
 
   if (!isAdmin) {
-    return null // Will redirect
+    return null
   }
 
   const stats = {
     totalUsers: users.length,
     totalOrganizers: organizers.length,
     pendingApprovals: pendingApprovals.length,
-    activeCustomers: users.filter(u => u.role === 'customer').length
+    activeCustomers: users.filter(u => u.role === 'customer').length,
+    revenue: 528976, // Mock data - replace with real data
+    growth: 7.9,
+    topSales: 72,
+    deals: 256
   }
 
   const filteredUsers = users.filter(u => {
@@ -240,286 +254,449 @@ export default function AdminPage() {
     return matchesSearch && matchesRole
   })
 
+  // Top performers mock data
+  const topPerformers = [
+    { name: 'Mumbai Events', revenue: 209633, percentage: 39.63, avatar: '🏙️' },
+    { name: 'Bangalore Tech', revenue: 156841, percentage: 29.65, avatar: '💼' },
+    { name: 'Delhi Sports', revenue: 117115, percentage: 22.14, avatar: '🏛️' },
+  ]
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto">
+        <div className="p-6">
+          {/* Logo */}
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Shield className="w-8 h-8" />
-                <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-              </div>
-              <p className="text-white/90">Full control over users, organizers, and events</p>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-white/80">Logged in as</div>
-              <div className="font-semibold">{user?.email}</div>
+              <h1 className="text-lg font-bold text-gray-900">ShowUp</h1>
+              <p className="text-xs text-gray-500">Admin Panel</p>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Message Banner */}
-      {message && (
-        <div className={`${message.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'} border-t-4 px-4 py-3`}>
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <p className="font-medium">{message.text}</p>
-            <button onClick={() => setMessage(null)} className="text-current hover:opacity-70">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Tabs */}
-      <div className="bg-white border-b sticky top-16 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-8">
+          {/* Navigation */}
+          <nav className="space-y-1">
             <button
-              onClick={() => setActiveTab('overview')}
-              className={`flex items-center gap-2 px-4 py-4 border-b-2 font-medium transition ${
-                activeTab === 'overview'
-                  ? 'border-purple-600 text-purple-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              onClick={() => setActiveView('overview')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition ${
+                activeView === 'overview'
+                  ? 'bg-gradient-to-r from-pink-50 to-purple-50 text-pink-600'
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <BarChart3 className="w-5 h-5" />
+              <span>Dashboard</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('analytics')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition ${
+                activeView === 'analytics'
+                  ? 'bg-gradient-to-r from-pink-50 to-purple-50 text-pink-600'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <TrendingUp className="w-5 h-5" />
-              Overview
+              <span>Analytics</span>
             </button>
+
             <button
-              onClick={() => setActiveTab('users')}
-              className={`flex items-center gap-2 px-4 py-4 border-b-2 font-medium transition ${
-                activeTab === 'users'
-                  ? 'border-purple-600 text-purple-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              onClick={() => setActiveView('users')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition ${
+                activeView === 'users'
+                  ? 'bg-gradient-to-r from-pink-50 to-purple-50 text-pink-600'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <Users className="w-5 h-5" />
-              All Users ({stats.totalUsers})
+              <span>All Users</span>
+              <span className="ml-auto bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">
+                {stats.totalUsers}
+              </span>
             </button>
+
             <button
-              onClick={() => setActiveTab('organizers')}
-              className={`flex items-center gap-2 px-4 py-4 border-b-2 font-medium transition ${
-                activeTab === 'organizers'
-                  ? 'border-purple-600 text-purple-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              onClick={() => setActiveView('organizers')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition ${
+                activeView === 'organizers'
+                  ? 'bg-gradient-to-r from-pink-50 to-purple-50 text-pink-600'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <UserCheck className="w-5 h-5" />
-              Organizers ({stats.totalOrganizers})
+              <span>Organizers</span>
+              <span className="ml-auto bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">
+                {stats.totalOrganizers}
+              </span>
             </button>
+
             <button
-              onClick={() => setActiveTab('approvals')}
-              className={`flex items-center gap-2 px-4 py-4 border-b-2 font-medium transition ${
-                activeTab === 'approvals'
-                  ? 'border-purple-600 text-purple-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              onClick={() => setActiveView('approvals')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition ${
+                activeView === 'approvals'
+                  ? 'bg-gradient-to-r from-pink-50 to-purple-50 text-pink-600'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <FileCheck className="w-5 h-5" />
-              Pending Approvals
+              <span>Approvals</span>
               {stats.pendingApprovals > 0 && (
-                <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                <span className="ml-auto bg-pink-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
                   {stats.pendingApprovals}
                 </span>
               )}
             </button>
+
+            <button
+              onClick={() => setActiveView('bookings')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition ${
+                activeView === 'bookings'
+                  ? 'bg-gradient-to-r from-pink-50 to-purple-50 text-pink-600'
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Ticket className="w-5 h-5" />
+              <span>Bookings</span>
+            </button>
+          </nav>
+
+          {/* Admin Info */}
+          <div className="mt-auto pt-6 border-t border-gray-200">
+            <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
+              <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                {user?.email?.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold text-gray-900 truncate">{user?.displayName || 'Admin'}</div>
+                <div className="text-xs text-gray-500 truncate">Admin Access</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div className="space-y-8">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-gray-600">Total Users</h3>
-                  <Users className="w-8 h-8 text-blue-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">{stats.totalUsers}</p>
-                <p className="text-sm text-gray-500 mt-1">{stats.activeCustomers} customers</p>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-gray-600">Organizers</h3>
-                  <UserCheck className="w-8 h-8 text-purple-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">{stats.totalOrganizers}</p>
-                <p className="text-sm text-gray-500 mt-1">Active event creators</p>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-orange-500">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-gray-600">Pending Approvals</h3>
-                  <AlertCircle className="w-8 h-8 text-orange-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">{stats.pendingApprovals}</p>
-                <p className="text-sm text-gray-500 mt-1">Needs your review</p>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-gray-600">Total Revenue</h3>
-                  <DollarSign className="w-8 h-8 text-green-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">₹0</p>
-                <p className="text-sm text-gray-500 mt-1">Coming soon</p>
-              </div>
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {activeView === 'overview' && 'Dashboard Overview'}
+                {activeView === 'analytics' && 'Analytics & Reports'}
+                {activeView === 'users' && 'User Management'}
+                {activeView === 'organizers' && 'Organizer Management'}
+                {activeView === 'approvals' && 'Event Approvals'}
+                {activeView === 'bookings' && 'Booking Management'}
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                {activeView === 'overview' && 'Complete overview of your platform'}
+                {activeView === 'analytics' && 'Deep insights into performance metrics'}
+                {activeView === 'users' && 'Manage all registered users'}
+                {activeView === 'organizers' && 'Control event organizer access'}
+                {activeView === 'approvals' && 'Review and approve events'}
+                {activeView === 'bookings' && 'Monitor all ticket bookings'}
+              </p>
             </div>
-
-            {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center gap-3">
+              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                <Download className="w-4 h-4" />
+                <span className="text-sm font-medium">Export</span>
+              </button>
+              {activeView === 'organizers' && (
                 <button
                   onClick={() => setShowAddOrganizer(true)}
-                  className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition"
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition"
                 >
-                  <Plus className="w-6 h-6 text-purple-600" />
-                  <div className="text-left">
-                    <div className="font-semibold text-gray-900">Add Organizer</div>
-                    <div className="text-sm text-gray-600">Grant organizer access</div>
-                  </div>
+                  <Plus className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Add Organizer</span>
                 </button>
-
-                <button
-                  onClick={() => setActiveTab('approvals')}
-                  className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition"
-                >
-                  <FileCheck className="w-6 h-6 text-orange-600" />
-                  <div className="text-left">
-                    <div className="font-semibold text-gray-900">Review Events</div>
-                    <div className="text-sm text-gray-600">{stats.pendingApprovals} pending</div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('users')}
-                  className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition"
-                >
-                  <Users className="w-6 h-6 text-blue-600" />
-                  <div className="text-left">
-                    <div className="font-semibold text-gray-900">Manage Users</div>
-                    <div className="text-sm text-gray-600">View all users</div>
-                  </div>
-                </button>
-              </div>
+              )}
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Users Tab */}
-        {activeTab === 'users' && (
-          <div className="space-y-6">
-            {/* Search and Filter */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search by email or name..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 placeholder:text-gray-400"
-                  />
-                </div>
-                <select
-                  value={filterRole}
-                  onChange={(e) => setFilterRole(e.target.value as any)}
-                  className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
-                >
-                  <option value="all">All Roles</option>
-                  <option value="admin">Admin</option>
-                  <option value="organizer">Organizer</option>
-                  <option value="customer">Customer</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Users List */}
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {filteredUsers.map(user => (
-                      <tr key={user.uid} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold">
-                              {user.displayName?.charAt(0) || user.email.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{user.displayName || 'N/A'}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.email}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                            user.role === 'organizer' ? 'bg-blue-100 text-blue-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {user.role}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                          {new Date(user.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                          }`}>
-                            {user.isActive ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Organizers Tab */}
-        {activeTab === 'organizers' && (
-          <div className="space-y-6">
-            {/* Add Organizer Button */}
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">Manage Organizers</h2>
-              <button
-                onClick={() => setShowAddOrganizer(true)}
-                className="flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
-              >
-                <Plus className="w-5 h-5" />
-                Add Organizer
+        {/* Message Banner */}
+        {message && (
+          <div className={`${message.type === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border-l-4 px-8 py-4`}>
+            <div className="flex items-center justify-between">
+              <p className={`text-sm font-medium ${message.type === 'success' ? 'text-green-800' : 'text-red-800'}`}>
+                {message.text}
+              </p>
+              <button onClick={() => setMessage(null)} className="text-current hover:opacity-70">
+                <X className="w-5 h-5" />
               </button>
             </div>
+          </div>
+        )}
 
-            {/* Organizers Grid */}
+        {/* Content */}
+        <div className="p-8">
+          {/* Overview Dashboard */}
+          {activeView === 'overview' && (
+            <div className="space-y-6">
+              {/* KPI Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                      <Users className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex items-center gap-1 text-green-600 text-sm font-semibold">
+                      <TrendingUp className="w-4 h-4" />
+                      <span>12%</span>
+                    </div>
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-600 mb-1">Total Users</h3>
+                  <p className="text-3xl font-bold text-gray-900">{stats.totalUsers}</p>
+                  <p className="text-xs text-gray-500 mt-2">{stats.activeCustomers} customers</p>
+                </div>
+
+                <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                      <UserCheck className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex items-center gap-1 text-green-600 text-sm font-semibold">
+                      <TrendingUp className="w-4 h-4" />
+                      <span>8%</span>
+                    </div>
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-600 mb-1">Organizers</h3>
+                  <p className="text-3xl font-bold text-gray-900">{stats.totalOrganizers}</p>
+                  <p className="text-xs text-gray-500 mt-2">Active event creators</p>
+                </div>
+
+                <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
+                      <AlertCircle className="w-6 h-6 text-white" />
+                    </div>
+                    {stats.pendingApprovals > 0 && (
+                      <div className="flex items-center gap-1 text-orange-600 text-sm font-semibold animate-pulse">
+                        <Clock className="w-4 h-4" />
+                        <span>Pending</span>
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-600 mb-1">Pending Approvals</h3>
+                  <p className="text-3xl font-bold text-gray-900">{stats.pendingApprovals}</p>
+                  <p className="text-xs text-gray-500 mt-2">Needs your review</p>
+                </div>
+
+                <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                      <DollarSign className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex items-center gap-1 text-green-600 text-sm font-semibold">
+                      <TrendingUp className="w-4 h-4" />
+                      <span>{stats.growth}%</span>
+                    </div>
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-600 mb-1">Total Revenue</h3>
+                  <p className="text-3xl font-bold text-gray-900">₹{stats.revenue.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 mt-2">vs prev. period</p>
+                </div>
+              </div>
+
+              {/* Revenue and Top Sales */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Revenue Card */}
+                <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-200">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-1">Revenue</h3>
+                      <div className="flex items-center gap-3">
+                        <p className="text-3xl font-bold text-gray-900">₹{stats.revenue.toLocaleString()}</p>
+                        <span className="text-sm text-gray-500">82</span>
+                        <span className="flex items-center gap-1 bg-pink-100 text-pink-600 text-xs font-bold px-2 py-1 rounded-full">
+                          <TrendingUp className="w-3 h-3" />
+                          {stats.growth}%
+                        </span>
+                        <span className="bg-pink-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                          ₹27,335.09
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-2">vs prev. ₹501,641.73 Jun 1 - Aug 31, 2023</p>
+                    </div>
+                  </div>
+
+                  {/* Top Performers */}
+                  <div className="grid grid-cols-3 gap-4">
+                    {topPerformers.map((performer, index) => (
+                      <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                        <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white text-lg">
+                          {performer.avatar}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-gray-900">₹{performer.revenue.toLocaleString()}</p>
+                          <p className="text-xs text-gray-500">{performer.percentage}%</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Quick Stats */}
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl p-6 text-white">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-sm font-medium opacity-90">Top sales 💪</h3>
+                      <Star className="w-5 h-5" />
+                    </div>
+                    <p className="text-4xl font-bold mb-1">{stats.topSales}</p>
+                    <p className="text-sm opacity-90">Most selling events</p>
+                    <div className="mt-4 pt-4 border-t border-white/20">
+                      <p className="text-sm font-semibold">Top Performer</p>
+                      <p className="text-xs opacity-90">Mumbai Events</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-sm font-medium text-gray-600">Deals</h3>
+                      <Ticket className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <p className="text-4xl font-bold text-gray-900 mb-1">{stats.deals}</p>
+                    <p className="text-sm text-gray-500">Active bookings</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recent Activity */}
+              <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-gray-900">Recent Activity</h3>
+                  <button className="text-sm text-pink-600 font-semibold hover:text-pink-700">
+                    View all →
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  {users.slice(0, 5).map((user, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                          {user.displayName?.charAt(0) || user.email.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">{user.displayName || 'User'}</p>
+                          <p className="text-sm text-gray-500">{user.email}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                          user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                          user.role === 'organizer' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {user.role}
+                        </span>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {new Date(user.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Other views remain similar but with updated styling... */}
+          {activeView === 'users' && (
+            <div className="space-y-6">
+              {/* Search and Filter */}
+              <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                <div className="flex gap-4">
+                  <div className="flex-1 relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search users by name or email..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder:text-gray-400"
+                    />
+                  </div>
+                  <select
+                    value={filterRole}
+                    onChange={(e) => setFilterRole(e.target.value as any)}
+                    className="px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900"
+                  >
+                    <option value="all">All Roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="organizer">Organizer</option>
+                    <option value="customer">Customer</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Users List */}
+              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Joined</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {filteredUsers.map(user => (
+                        <tr key={user.uid} className="hover:bg-gray-50 transition">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                                {user.displayName?.charAt(0) || user.email.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <div className="text-sm font-semibold text-gray-900">{user.displayName || 'N/A'}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.email}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-3 py-1 inline-flex text-xs font-semibold rounded-full ${
+                              user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                              user.role === 'organizer' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {user.role}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {new Date(user.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-3 py-1 inline-flex text-xs font-semibold rounded-full ${
+                              user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                              {user.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Organizers View */}
+          {activeView === 'organizers' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {organizers.map(org => (
-                <div key={org.uid} className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:border-purple-500 transition">
+                <div key={org.uid} className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition">
                   <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
                       {org.displayName?.charAt(0) || org.email.charAt(0).toUpperCase()}
                     </div>
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
@@ -529,54 +706,53 @@ export default function AdminPage() {
                     </span>
                   </div>
                   
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{org.displayName || 'N/A'}</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">{org.displayName || 'N/A'}</h3>
                   <p className="text-sm text-gray-600 mb-4">{org.email}</p>
                   
-                  <div className="pt-4 border-t border-gray-100">
-                    <div className="text-xs text-gray-500 mb-2">Joined: {new Date(org.createdAt).toLocaleDateString()}</div>
+                  <div className="pt-4 border-t border-gray-100 space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500">Joined:</span>
+                      <span className="font-medium text-gray-900">{new Date(org.createdAt).toLocaleDateString()}</span>
+                    </div>
                     {org.role !== 'admin' && (
                       <button
                         onClick={() => handleRemoveOrganizer(org.uid)}
-                        className="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-medium hover:bg-red-100 transition text-sm"
+                        className="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 px-4 py-3 rounded-xl font-semibold hover:bg-red-100 transition mt-4"
                       >
                         <Ban className="w-4 h-4" />
-                        Remove Organizer Role
+                        Remove Role
                       </button>
                     )}
                   </div>
                 </div>
               ))}
+
+              {organizers.length === 0 && (
+                <div className="col-span-full bg-white rounded-2xl p-12 text-center border border-gray-200">
+                  <UserCheck className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">No Organizers Yet</h3>
+                  <p className="text-gray-600 mb-6">Start by adding your first organizer</p>
+                  <button
+                    onClick={() => setShowAddOrganizer(true)}
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Add Organizer
+                  </button>
+                </div>
+              )}
             </div>
+          )}
 
-            {organizers.length === 0 && (
-              <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-                <UserCheck className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No Organizers Yet</h3>
-                <p className="text-gray-600 mb-6">Start by adding your first organizer</p>
-                <button
-                  onClick={() => setShowAddOrganizer(true)}
-                  className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
-                >
-                  <Plus className="w-5 h-5" />
-                  Add Organizer
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Approvals Tab */}
-        {activeTab === 'approvals' && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Pending Event Approvals</h2>
-
-            {pendingApprovals.length > 0 ? (
-              <div className="space-y-4">
-                {pendingApprovals.map(approval => (
-                  <div key={approval.id} className="bg-white rounded-xl shadow-sm p-6 border border-orange-200">
+          {/* Approvals View */}
+          {activeView === 'approvals' && (
+            <div className="space-y-6">
+              {pendingApprovals.length > 0 ? (
+                pendingApprovals.map(approval => (
+                  <div key={approval.id} className="bg-white rounded-2xl p-6 border border-orange-200 hover:shadow-lg transition">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
+                        <div className="flex items-center gap-3 mb-3">
                           <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
                             approval.type === 'create' ? 'bg-green-100 text-green-800' :
                             approval.type === 'edit' ? 'bg-blue-100 text-blue-800' :
@@ -584,131 +760,132 @@ export default function AdminPage() {
                           }`}>
                             {approval.type.replace('_', ' ').toUpperCase()}
                           </span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
                             {new Date(approval.submittedAt).toLocaleString()}
                           </span>
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">
                           {approval.changes.title || 'Untitled Event'}
                         </h3>
-                        <p className="text-sm text-gray-600 line-clamp-2">
+                        <p className="text-sm text-gray-600 line-clamp-2 mb-4">
                           {approval.changes.description || 'No description'}
                         </p>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
                       <div>
-                        <div className="text-xs text-gray-500 mb-1">Category</div>
-                        <div className="font-medium text-gray-900">{approval.changes.category}</div>
+                        <div className="text-xs text-gray-500 mb-1 font-medium">Category</div>
+                        <div className="font-semibold text-gray-900">{approval.changes.category}</div>
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 mb-1">Venue</div>
-                        <div className="font-medium text-gray-900">{approval.changes.venue}</div>
+                        <div className="text-xs text-gray-500 mb-1 font-medium">Venue</div>
+                        <div className="font-semibold text-gray-900">{approval.changes.venue}</div>
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 mb-1">Price Range</div>
-                        <div className="font-medium text-gray-900">
+                        <div className="text-xs text-gray-500 mb-1 font-medium">Price Range</div>
+                        <div className="font-semibold text-gray-900">
                           ₹{approval.changes.minPrice} - ₹{approval.changes.maxPrice}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 mb-1">Organizer ID</div>
-                        <div className="font-medium text-gray-900 text-xs truncate">{approval.organizerId.slice(0, 8)}...</div>
+                        <div className="text-xs text-gray-500 mb-1 font-medium">Organizer</div>
+                        <div className="font-semibold text-gray-900 text-xs truncate">
+                          {approval.organizerId.slice(0, 8)}...
+                        </div>
                       </div>
                     </div>
 
                     <div className="flex gap-3">
                       <button
                         onClick={() => handleReviewApproval(approval.id, true)}
-                        className="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+                        className="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-700 hover:shadow-lg transition"
                       >
                         <Check className="w-5 h-5" />
                         Approve
                       </button>
                       <button
                         onClick={() => handleReviewApproval(approval.id, false)}
-                        className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition"
+                        className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-700 hover:shadow-lg transition"
                       >
                         <X className="w-5 h-5" />
                         Reject
                       </button>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-                <FileCheck className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">All Caught Up!</h3>
-                <p className="text-gray-600">No pending approvals at the moment</p>
-              </div>
-            )}
-          </div>
-        )}
+                ))
+              ) : (
+                <div className="bg-white rounded-2xl p-12 text-center border border-gray-200">
+                  <FileCheck className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">All Caught Up!</h3>
+                  <p className="text-gray-600">No pending approvals at the moment</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Add Organizer Modal */}
       {showAddOrganizer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowAddOrganizer(false)} />
-          <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scaleIn">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Add New Organizer</h2>
-              <button
-                onClick={() => setShowAddOrganizer(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn bg-black/50 backdrop-blur-sm">
+          <div className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 animate-scaleIn">
+            <button
+              onClick={() => setShowAddOrganizer(false)}
+              className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Add New Organizer</h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
                 <input
                   type="email"
                   value={newOrganizerEmail}
                   onChange={(e) => setNewOrganizerEmail(e.target.value)}
                   placeholder="organizer@example.com"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder:text-gray-400"
                 />
-                <p className="text-xs text-gray-500 mt-1">User must be registered on ShowUp first</p>
+                <p className="text-xs text-gray-500 mt-2">User must be registered first</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
                 <input
                   type="text"
                   value={newOrganizerName}
                   onChange={(e) => setNewOrganizerName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder:text-gray-400"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Organization (Optional)</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Organization (Optional)</label>
                 <input
                   type="text"
                   value={newOrganizerOrg}
                   onChange={(e) => setNewOrganizerOrg(e.target.value)}
                   placeholder="Event Company Ltd."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder:text-gray-400"
                 />
               </div>
 
               <div className="flex gap-3 pt-4">
                 <button
                   onClick={() => setShowAddOrganizer(false)}
-                  className="flex-1 px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition"
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleAddOrganizer}
                   disabled={addingOrganizer || !newOrganizerEmail || !newOrganizerName}
-                  className="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {addingOrganizer ? 'Adding...' : 'Add Organizer'}
                 </button>
@@ -720,4 +897,3 @@ export default function AdminPage() {
     </div>
   )
 }
-
