@@ -36,7 +36,15 @@ export async function signInWithEmail(
   email: string,
   password: string
 ): Promise<UserCredential> {
-  return await signInWithEmailAndPassword(auth, email, password)
+  const userCredential = await signInWithEmailAndPassword(auth, email, password)
+  
+  // Ensure user document exists
+  const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid))
+  if (!userDoc.exists()) {
+    await createUserDocument(userCredential.user)
+  }
+  
+  return userCredential
 }
 
 // Sign in with Google
@@ -66,14 +74,19 @@ export async function resetPassword(email: string): Promise<void> {
 async function createUserDocument(user: User): Promise<void> {
   const userRef = doc(db, 'users', user.uid)
   
+  // Check if user is admin based on email
+  const ADMIN_EMAIL = 'chinmayjoshi1359@gmail.com'
+  const role = user.email === ADMIN_EMAIL ? 'admin' : 'customer'
+  
   const userData = {
     uid: user.uid,
     email: user.email,
     displayName: user.displayName || '',
     photoURL: user.photoURL || '',
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-    role: 'user', // default role
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    role: role,
+    isActive: true,
     preferences: {
       city: 'Mumbai',
       notifications: {
@@ -96,11 +109,16 @@ export function getCurrentUser(): User | null {
 
 // Check if user is admin
 export async function isAdmin(uid: string): Promise<boolean> {
-  const userDoc = await getDoc(doc(db, 'users', uid))
-  if (userDoc.exists()) {
-    const userData = userDoc.data()
-    return userData.role === 'admin' || userData.role === 'organizer'
+  try {
+    const userDoc = await getDoc(doc(db, 'users', uid))
+    if (userDoc.exists()) {
+      const userData = userDoc.data()
+      return userData.role === 'admin'
+    }
+    return false
+  } catch (error) {
+    console.error('Error checking admin status:', error)
+    return false
   }
-  return false
 }
 

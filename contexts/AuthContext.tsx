@@ -38,6 +38,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log('Analytics not initialized:', error)
         }
         
+        // Initialize user profile in Firestore if needed
+        try {
+          const { initializeUserProfile } = await import('@/lib/firebase/admin')
+          await initializeUserProfile(
+            user.uid,
+            user.email || '',
+            user.displayName,
+            user.photoURL
+          )
+        } catch (error) {
+          console.error('Error initializing user profile:', error)
+        }
+        
         // Check if user is admin
         try {
           const { isAdmin: checkAdmin } = await import('@/lib/firebase/auth')
