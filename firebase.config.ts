@@ -7,42 +7,55 @@ import { getMessaging, Messaging, isSupported as isMessagingSupported } from 'fi
 import { getRemoteConfig, RemoteConfig } from 'firebase/remote-config'
 
 // Firebase configuration
-// Replace these with your actual Firebase config values
+// Replace these with your actual Firebase config values from Firebase Console
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyDummyKeyForBuildTime",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "showup-e088f.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "showup-e088f",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "showup-e088f.appspot.com",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:123456789:web:abc123",
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-XXXXXXXXXX"
 }
 
 // Initialize Firebase
-let app: FirebaseApp
-let auth: Auth
-let db: Firestore
-let storage: FirebaseStorage
+let app: FirebaseApp | undefined
+let auth: Auth | undefined
+let db: Firestore | undefined
+let storage: FirebaseStorage | undefined
 let analytics: Analytics | null = null
 let messaging: Messaging | null = null
 let remoteConfig: RemoteConfig | undefined
 
-// Initialize Firebase app
-if (!getApps().length) {
-  app = initializeApp(firebaseConfig)
-} else {
-  app = getApps()[0]
+// Only initialize Firebase if we have valid config (client-side only)
+if (typeof window !== 'undefined') {
+  // Initialize Firebase app
+  if (!getApps().length) {
+    try {
+      app = initializeApp(firebaseConfig)
+    } catch (error) {
+      console.error('Firebase initialization error:', error)
+    }
+  } else {
+    app = getApps()[0]
+  }
+
+  // Initialize services only if app is initialized
+  if (app) {
+    try {
+      auth = getAuth(app)
+      db = getFirestore(app)
+      storage = getStorage(app)
+    } catch (error) {
+      console.error('Firebase services initialization error:', error)
+    }
+  }
 }
 
-// Initialize services
-auth = getAuth(app)
-db = getFirestore(app)
-storage = getStorage(app)
-
 // Initialize Analytics (only in browser and if supported)
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && app) {
   isSupported().then(yes => {
-    if (yes) {
+    if (yes && app) {
       analytics = getAnalytics(app)
     }
   }).catch(err => {
@@ -51,9 +64,9 @@ if (typeof window !== 'undefined') {
 }
 
 // Initialize Messaging (only in browser and if supported)
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && app) {
   isMessagingSupported().then(yes => {
-    if (yes) {
+    if (yes && app) {
       messaging = getMessaging(app)
     }
   }).catch(err => {
@@ -62,7 +75,7 @@ if (typeof window !== 'undefined') {
 }
 
 // Initialize Remote Config (only in browser)
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && app) {
   try {
     remoteConfig = getRemoteConfig(app)
     remoteConfig.settings = {
