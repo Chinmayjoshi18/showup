@@ -824,6 +824,194 @@ export default function AdminPage() {
               )}
             </div>
           )}
+
+          {/* Analytics View */}
+          {activeView === 'analytics' && (
+            <div className="space-y-6">
+              {/* Chart Sections */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Revenue Over Time */}
+                <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-900 mb-6">Revenue Trend</h3>
+                  <div className="h-64 flex items-end justify-between gap-2">
+                    {[45, 52, 38, 65, 72, 58, 88, 92, 85, 95, 78, 89].map((height, i) => (
+                      <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                        <div 
+                          className="w-full bg-gradient-to-t from-pink-500 to-purple-600 rounded-t-lg hover:opacity-80 transition cursor-pointer"
+                          style={{ height: `${height}%` }}
+                        />
+                        <span className="text-xs text-gray-500">
+                          {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Category Performance */}
+                <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-900 mb-6">Performance by Category</h3>
+                  <div className="space-y-4">
+                    {[
+                      { name: 'Movies', value: 35, color: 'from-blue-500 to-blue-600' },
+                      { name: 'Events', value: 28, color: 'from-purple-500 to-purple-600' },
+                      { name: 'Sports', value: 18, color: 'from-green-500 to-green-600' },
+                      { name: 'Plays', value: 12, color: 'from-orange-500 to-orange-600' },
+                      { name: 'Workshops', value: 7, color: 'from-pink-500 to-pink-600' },
+                    ].map((cat, i) => (
+                      <div key={i}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-semibold text-gray-900">{cat.name}</span>
+                          <span className="text-sm font-bold text-gray-900">{cat.value}%</span>
+                        </div>
+                        <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                          <div 
+                            className={`h-full bg-gradient-to-r ${cat.color} rounded-full transition-all duration-500`}
+                            style={{ width: `${cat.value}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* City Performance */}
+              <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                <h3 className="text-lg font-bold text-gray-900 mb-6">Top Performing Cities</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[
+                    { city: 'Mumbai', bookings: 1543, revenue: 2456789, growth: 12.5 },
+                    { city: 'Bangalore', bookings: 1287, revenue: 1987654, growth: 8.3 },
+                    { city: 'Delhi', bookings: 1156, revenue: 1765432, growth: -2.1 },
+                    { city: 'Hyderabad', bookings: 987, revenue: 1456789, growth: 15.7 },
+                    { city: 'Chennai', bookings: 856, revenue: 1234567, growth: 5.4 },
+                    { city: 'Pune', bookings: 743, revenue: 987654, growth: 9.8 },
+                  ].map((city, i) => (
+                    <div key={i} className="p-4 bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-bold text-gray-900">{city.city}</h4>
+                        <div className={`flex items-center gap-1 text-xs font-bold ${
+                          city.growth > 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {city.growth > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                          {Math.abs(city.growth)}%
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-600">Bookings</span>
+                          <span className="text-sm font-bold text-gray-900">{city.bookings.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-600">Revenue</span>
+                          <span className="text-sm font-bold text-gray-900">₹{(city.revenue / 1000).toFixed(0)}K</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Bookings View */}
+          {activeView === 'bookings' && (
+            <div className="space-y-6">
+              {/* Booking Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <Ticket className="w-8 h-8 text-blue-500" />
+                    <span className="text-sm font-semibold text-green-600">+24%</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-1">Total Bookings</p>
+                  <p className="text-3xl font-bold text-gray-900">3,847</p>
+                </div>
+                <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <DollarSign className="w-8 h-8 text-green-500" />
+                    <span className="text-sm font-semibold text-green-600">+18%</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-1">Booking Revenue</p>
+                  <p className="text-3xl font-bold text-gray-900">₹5.2M</p>
+                </div>
+                <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <Activity className="w-8 h-8 text-purple-500" />
+                    <span className="text-sm font-semibold text-green-600">+7%</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-1">Avg. Booking Value</p>
+                  <p className="text-3xl font-bold text-gray-900">₹1,352</p>
+                </div>
+                <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <Award className="w-8 h-8 text-orange-500" />
+                    <span className="text-sm font-semibold text-orange-600">Live</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-1">Active Events</p>
+                  <p className="text-3xl font-bold text-gray-900">127</p>
+                </div>
+              </div>
+
+              {/* Recent Bookings */}
+              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div className="p-6 border-b border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-900">Recent Bookings</h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Booking ID</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Event</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Customer</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Date</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Seats</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Amount</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {[...Array(12)].map((_, i) => (
+                        <tr key={i} className="hover:bg-gray-50 transition">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="text-sm font-mono text-gray-600">#BK{10000 + i}</span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-sm font-semibold text-gray-900">Event Name {i + 1}</div>
+                            <div className="text-xs text-gray-500">Movies • Mumbai</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-sm text-gray-900">Customer {i + 1}</div>
+                            <div className="text-xs text-gray-500">user{i + 1}@example.com</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {new Date(Date.now() - i * 86400000).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                            {Math.floor(Math.random() * 5) + 1}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                            ₹{(Math.random() * 2000 + 500).toFixed(0)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-3 py-1 inline-flex text-xs font-semibold rounded-full ${
+                              i % 3 === 0 ? 'bg-green-100 text-green-800' :
+                              i % 3 === 1 ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {i % 3 === 0 ? 'Confirmed' : i % 3 === 1 ? 'Pending' : 'Completed'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
