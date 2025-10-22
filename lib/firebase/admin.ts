@@ -15,7 +15,7 @@ import { db } from '@/firebase.config'
 import { UserRole, UserProfile, OrganizerRequest, EventApproval } from '@/lib/types/roles'
 
 // Admin email - ONLY THIS EMAIL HAS ADMIN ACCESS
-export const ADMIN_EMAIL = 'chinmay18joshi@gmail.com'
+export const ADMIN_EMAIL = 'chinmayjoshi1359@gmail.com'
 
 /**
  * Check if a user is an admin
