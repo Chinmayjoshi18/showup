@@ -15,95 +15,95 @@ export default function LocationModal({ isOpen, onSelectCity, onClose }: Locatio
   // Comprehensive list of Indian cities - Tier 1, Tier 2, and Tier 3
   const cities = [
     // Tier 1 Cities
-    { name: 'Mumbai', icon: '🏙️', tier: 1 },
-    { name: 'Delhi-NCR', icon: '🏛️', tier: 1 },
-    { name: 'Bangalore', icon: '💼', tier: 1 },
-    { name: 'Hyderabad', icon: '🏰', tier: 1 },
-    { name: 'Ahmedabad', icon: '🕌', tier: 1 },
-    { name: 'Chennai', icon: '🏖️', tier: 1 },
-    { name: 'Kolkata', icon: '📚', tier: 1 },
-    { name: 'Pune', icon: '🎓', tier: 1 },
+    { name: 'Mumbai', tier: 1 },
+    { name: 'Delhi-NCR', tier: 1 },
+    { name: 'Bangalore', tier: 1 },
+    { name: 'Hyderabad', tier: 1 },
+    { name: 'Ahmedabad', tier: 1 },
+    { name: 'Chennai', tier: 1 },
+    { name: 'Kolkata', tier: 1 },
+    { name: 'Pune', tier: 1 },
     
     // Tier 2 Cities
-    { name: 'Surat', icon: '💎', tier: 2 },
-    { name: 'Jaipur', icon: '🏰', tier: 2 },
-    { name: 'Lucknow', icon: '🕌', tier: 2 },
-    { name: 'Kanpur', icon: '🏭', tier: 2 },
-    { name: 'Nagpur', icon: '🍊', tier: 2 },
-    { name: 'Indore', icon: '🏛️', tier: 2 },
-    { name: 'Thane', icon: '🏙️', tier: 2 },
-    { name: 'Bhopal', icon: '🏞️', tier: 2 },
-    { name: 'Visakhapatnam', icon: '🚢', tier: 2 },
-    { name: 'Pimpri-Chinchwad', icon: '🏭', tier: 2 },
-    { name: 'Patna', icon: '📚', tier: 2 },
-    { name: 'Vadodara', icon: '🎨', tier: 2 },
-    { name: 'Ghaziabad', icon: '🏘️', tier: 2 },
-    { name: 'Ludhiana', icon: '🧵', tier: 2 },
-    { name: 'Agra', icon: '🕌', tier: 2 },
-    { name: 'Nashik', icon: '🍇', tier: 2 },
-    { name: 'Faridabad', icon: '🏘️', tier: 2 },
-    { name: 'Meerut', icon: '🏛️', tier: 2 },
-    { name: 'Rajkot', icon: '🏭', tier: 2 },
-    { name: 'Varanasi', icon: '🕉️', tier: 2 },
-    { name: 'Srinagar', icon: '🏔️', tier: 2 },
-    { name: 'Amritsar', icon: '🕌', tier: 2 },
-    { name: 'Chandigarh', icon: '🌳', tier: 2 },
-    { name: 'Kochi', icon: '🌴', tier: 2 },
-    { name: 'Coimbatore', icon: '🏭', tier: 2 },
-    { name: 'Madurai', icon: '🕌', tier: 2 },
-    { name: 'Jodhpur', icon: '🏰', tier: 2 },
-    { name: 'Guwahati', icon: '🌊', tier: 2 },
-    { name: 'Bhubaneswar', icon: '🕌', tier: 2 },
-    { name: 'Dehradun', icon: '⛰️', tier: 2 },
-    { name: 'Mysore', icon: '🏰', tier: 2 },
-    { name: 'Raipur', icon: '🏭', tier: 2 },
-    { name: 'Ranchi', icon: '🏞️', tier: 2 },
-    { name: 'Jabalpur', icon: '💧', tier: 2 },
-    { name: 'Gwalior', icon: '🏰', tier: 2 },
-    { name: 'Vijayawada', icon: '🏞️', tier: 2 },
-    { name: 'Tirupati', icon: '🕉️', tier: 2 },
-    { name: 'Udaipur', icon: '🏰', tier: 2 },
-    { name: 'Mangalore', icon: '🌊', tier: 2 },
-    { name: 'Aurangabad', icon: '🏛️', tier: 2 },
-    { name: 'Thiruvananthapuram', icon: '🌴', tier: 2 },
+    { name: 'Surat', tier: 2 },
+    { name: 'Jaipur', tier: 2 },
+    { name: 'Lucknow', tier: 2 },
+    { name: 'Kanpur', tier: 2 },
+    { name: 'Nagpur', tier: 2 },
+    { name: 'Indore', tier: 2 },
+    { name: 'Thane', tier: 2 },
+    { name: 'Bhopal', tier: 2 },
+    { name: 'Visakhapatnam', tier: 2 },
+    { name: 'Pimpri-Chinchwad', tier: 2 },
+    { name: 'Patna', tier: 2 },
+    { name: 'Vadodara', tier: 2 },
+    { name: 'Ghaziabad', tier: 2 },
+    { name: 'Ludhiana', tier: 2 },
+    { name: 'Agra', tier: 2 },
+    { name: 'Nashik', tier: 2 },
+    { name: 'Faridabad', tier: 2 },
+    { name: 'Meerut', tier: 2 },
+    { name: 'Rajkot', tier: 2 },
+    { name: 'Varanasi', tier: 2 },
+    { name: 'Srinagar', tier: 2 },
+    { name: 'Amritsar', tier: 2 },
+    { name: 'Chandigarh', tier: 2 },
+    { name: 'Kochi', tier: 2 },
+    { name: 'Coimbatore', tier: 2 },
+    { name: 'Madurai', tier: 2 },
+    { name: 'Jodhpur', tier: 2 },
+    { name: 'Guwahati', tier: 2 },
+    { name: 'Bhubaneswar', tier: 2 },
+    { name: 'Dehradun', tier: 2 },
+    { name: 'Mysore', tier: 2 },
+    { name: 'Raipur', tier: 2 },
+    { name: 'Ranchi', tier: 2 },
+    { name: 'Jabalpur', tier: 2 },
+    { name: 'Gwalior', tier: 2 },
+    { name: 'Vijayawada', tier: 2 },
+    { name: 'Tirupati', tier: 2 },
+    { name: 'Udaipur', tier: 2 },
+    { name: 'Mangalore', tier: 2 },
+    { name: 'Aurangabad', tier: 2 },
+    { name: 'Thiruvananthapuram', tier: 2 },
     
     // Tier 3 Cities
-    { name: 'Allahabad', icon: '🕉️', tier: 3 },
-    { name: 'Jammu', icon: '🏔️', tier: 3 },
-    { name: 'Jamshedpur', icon: '🏭', tier: 3 },
-    { name: 'Guntur', icon: '🌾', tier: 3 },
-    { name: 'Warangal', icon: '🏛️', tier: 3 },
-    { name: 'Hubli-Dharwad', icon: '🏙️', tier: 3 },
-    { name: 'Belgaum', icon: '🌳', tier: 3 },
-    { name: 'Jalandhar', icon: '🏭', tier: 3 },
-    { name: 'Shimla', icon: '🏔️', tier: 3 },
-    { name: 'Kolhapur', icon: '👑', tier: 3 },
-    { name: 'Gorakhpur', icon: '🕉️', tier: 3 },
-    { name: 'Cuttack', icon: '🏛️', tier: 3 },
-    { name: 'Kota', icon: '📚', tier: 3 },
-    { name: 'Bikaner', icon: '🐪', tier: 3 },
-    { name: 'Ajmer', icon: '🕌', tier: 3 },
-    { name: 'Siliguri', icon: '🏔️', tier: 3 },
-    { name: 'Nanded', icon: '🕉️', tier: 3 },
-    { name: 'Imphal', icon: '🌸', tier: 3 },
-    { name: 'Shillong', icon: '🏔️', tier: 3 },
-    { name: 'Agartala', icon: '🌳', tier: 3 },
-    { name: 'Rourkela', icon: '🏭', tier: 3 },
-    { name: 'Durgapur', icon: '🏭', tier: 3 },
-    { name: 'Asansol', icon: '🏭', tier: 3 },
-    { name: 'Dhanbad', icon: '⛏️', tier: 3 },
-    { name: 'Bhilai', icon: '🏭', tier: 3 },
-    { name: 'Amravati', icon: '🌾', tier: 3 },
-    { name: 'Nellore', icon: '🌾', tier: 3 },
-    { name: 'Kurnool', icon: '🏞️', tier: 3 },
-    { name: 'Rajahmundry', icon: '🌊', tier: 3 },
-    { name: 'Tirunelveli', icon: '🕌', tier: 3 },
-    { name: 'Salem', icon: '🏭', tier: 3 },
-    { name: 'Vellore', icon: '🏥', tier: 3 },
-    { name: 'Erode', icon: '🌾', tier: 3 },
-    { name: 'Thrissur', icon: '🎭', tier: 3 },
-    { name: 'Kozhikode', icon: '🌊', tier: 3 },
-    { name: 'Kollam', icon: '🌴', tier: 3 }
+    { name: 'Allahabad', tier: 3 },
+    { name: 'Jammu', tier: 3 },
+    { name: 'Jamshedpur', tier: 3 },
+    { name: 'Guntur', tier: 3 },
+    { name: 'Warangal', tier: 3 },
+    { name: 'Hubli-Dharwad', tier: 3 },
+    { name: 'Belgaum', tier: 3 },
+    { name: 'Jalandhar', tier: 3 },
+    { name: 'Shimla', tier: 3 },
+    { name: 'Kolhapur', tier: 3 },
+    { name: 'Gorakhpur', tier: 3 },
+    { name: 'Cuttack', tier: 3 },
+    { name: 'Kota', tier: 3 },
+    { name: 'Bikaner', tier: 3 },
+    { name: 'Ajmer', tier: 3 },
+    { name: 'Siliguri', tier: 3 },
+    { name: 'Nanded', tier: 3 },
+    { name: 'Imphal', tier: 3 },
+    { name: 'Shillong', tier: 3 },
+    { name: 'Agartala', tier: 3 },
+    { name: 'Rourkela', tier: 3 },
+    { name: 'Durgapur', tier: 3 },
+    { name: 'Asansol', tier: 3 },
+    { name: 'Dhanbad', tier: 3 },
+    { name: 'Bhilai', tier: 3 },
+    { name: 'Amravati', tier: 3 },
+    { name: 'Nellore', tier: 3 },
+    { name: 'Kurnool', tier: 3 },
+    { name: 'Rajahmundry', tier: 3 },
+    { name: 'Tirunelveli', tier: 3 },
+    { name: 'Salem', tier: 3 },
+    { name: 'Vellore', tier: 3 },
+    { name: 'Erode', tier: 3 },
+    { name: 'Thrissur', tier: 3 },
+    { name: 'Kozhikode', tier: 3 },
+    { name: 'Kollam', tier: 3 }
   ]
   
   const filteredCities = cities.filter(city =>
@@ -171,21 +171,20 @@ export default function LocationModal({ isOpen, onSelectCity, onClose }: Locatio
             {searchQuery ? `Results for "${searchQuery}"` : 'Popular Cities'}
           </h3>
           
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {citiesToShow.map((city, index) => (
-              <button
-                key={city.name}
-                onClick={() => handleSelectCity(city.name)}
-                style={{ animationDelay: `${index * 30}ms` }}
-                className="flex flex-col items-center gap-3 p-4 rounded-2xl border-2 border-gray-200 hover:border-primary-500 hover:bg-gradient-to-br hover:from-primary-50 hover:to-secondary-50 transition-all duration-300 group transform hover:scale-105 hover:shadow-lg animate-fadeIn"
-              >
-                <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">{city.icon}</div>
-                <span className="text-sm font-medium text-gray-900 group-hover:text-primary-600 transition-colors">
-                  {city.name}
-                </span>
-              </button>
-            ))}
-          </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {citiesToShow.map((city, index) => (
+                  <button
+                    key={city.name}
+                    onClick={() => handleSelectCity(city.name)}
+                    style={{ animationDelay: `${index * 30}ms` }}
+                    className="flex items-center justify-center p-4 rounded-2xl border-2 border-gray-200 hover:border-primary-500 hover:bg-gradient-to-br hover:from-primary-50 hover:to-secondary-50 transition-all duration-300 group transform hover:scale-105 hover:shadow-lg animate-fadeIn"
+                  >
+                    <span className="text-base font-medium text-gray-900 group-hover:text-primary-600 transition-colors">
+                      {city.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
           
           {citiesToShow.length === 0 && (
             <div className="text-center py-8 text-gray-500">
