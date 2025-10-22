@@ -137,7 +137,7 @@ export default function PaymentMethods({ amount, onPaymentMethodSelect, selected
                 placeholder="yourname@upi"
                 value={upiId}
                 onChange={(e) => setUpiId(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
               />
             </div>
 
@@ -147,7 +147,7 @@ export default function PaymentMethods({ amount, onPaymentMethodSelect, selected
               className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-bold text-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Shield className="w-5 h-5" />
-              Pay ₹{amount.toLocaleString()} Securely
+              Continue with UPI
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
@@ -175,7 +175,7 @@ export default function PaymentMethods({ amount, onPaymentMethodSelect, selected
                   value={cardDetails.number}
                   onChange={(e) => setCardDetails({ ...cardDetails, number: e.target.value })}
                   maxLength={19}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 placeholder:text-gray-400"
                 />
               </div>
 
@@ -186,7 +186,7 @@ export default function PaymentMethods({ amount, onPaymentMethodSelect, selected
                   placeholder="John Doe"
                   value={cardDetails.name}
                   onChange={(e) => setCardDetails({ ...cardDetails, name: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 placeholder:text-gray-400"
                 />
               </div>
 
@@ -199,7 +199,7 @@ export default function PaymentMethods({ amount, onPaymentMethodSelect, selected
                     value={cardDetails.expiry}
                     onChange={(e) => setCardDetails({ ...cardDetails, expiry: e.target.value })}
                     maxLength={5}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 placeholder:text-gray-400"
                   />
                 </div>
                 <div>
@@ -210,7 +210,7 @@ export default function PaymentMethods({ amount, onPaymentMethodSelect, selected
                     value={cardDetails.cvv}
                     onChange={(e) => setCardDetails({ ...cardDetails, cvv: e.target.value })}
                     maxLength={3}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 placeholder:text-gray-400"
                   />
                 </div>
               </div>
@@ -222,7 +222,7 @@ export default function PaymentMethods({ amount, onPaymentMethodSelect, selected
               className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-bold text-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Shield className="w-5 h-5" />
-              Pay ₹{amount.toLocaleString()} Securely
+              Continue with Card
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
@@ -267,7 +267,7 @@ export default function PaymentMethods({ amount, onPaymentMethodSelect, selected
               className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-bold text-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Shield className="w-5 h-5" />
-              Pay ₹{amount.toLocaleString()} Securely
+              Continue with Net Banking
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
@@ -314,7 +314,7 @@ export default function PaymentMethods({ amount, onPaymentMethodSelect, selected
               className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-bold text-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Shield className="w-5 h-5" />
-              Pay ₹{amount.toLocaleString()} Securely
+              Continue with {selectedWallet || 'Wallet'}
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>

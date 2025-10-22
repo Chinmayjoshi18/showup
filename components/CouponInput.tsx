@@ -121,7 +121,7 @@ export default function CouponInput({
                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                 onFocus={() => setShowSuggestions(true)}
                 placeholder="Enter coupon code"
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-sm font-bold uppercase"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-sm font-bold uppercase text-gray-900 placeholder:text-gray-400"
               />
             </div>
             <button

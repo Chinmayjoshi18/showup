@@ -330,7 +330,7 @@ export default function ProfilePage() {
                 <input
                   type="text"
                   defaultValue="Guest User"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               
@@ -339,7 +339,7 @@ export default function ProfilePage() {
                 <input
                   type="email"
                   defaultValue="guest@showup.com"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               
@@ -348,13 +348,13 @@ export default function ProfilePage() {
                 <input
                   type="tel"
                   defaultValue="+91 9876543210"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Preferred City</label>
-                <select className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <select className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900">
                   <option>Mumbai</option>
                   <option>Delhi</option>
                   <option>Bangalore</option>
