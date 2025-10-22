@@ -1,5 +1,8 @@
 'use client'
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Star, MapPin, Clock, Calendar, Share2, ChevronRight, Users } from 'lucide-react'

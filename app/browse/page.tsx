@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { Film, Music, Trophy, Theater, GraduationCap, Star, MapPin, Calendar, Filter } from 'lucide-react'
 import { events, getEventsByCategory } from '@/lib/data'
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 export default function BrowsePage() {
   const searchParams = useSearchParams()
   const categoryParam = searchParams.get('category')

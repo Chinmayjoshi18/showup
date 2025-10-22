@@ -10,6 +10,9 @@ import HeartButton from '@/components/HeartButton'
 import PullToRefresh from '@/components/PullToRefresh'
 import QuickFilters, { FilterOptions } from '@/components/QuickFilters'
 
+// Force dynamic rendering - no static generation
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   const [selectedCity, setSelectedCity] = useState('')
   const [showLocationModal, setShowLocationModal] = useState(false)

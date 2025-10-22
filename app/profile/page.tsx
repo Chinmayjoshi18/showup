@@ -1,5 +1,8 @@
 'use client'
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { User, Ticket, Heart, Settings, MapPin, Calendar, Download, Share2, ChevronRight, Bell, Star, X } from 'lucide-react'
