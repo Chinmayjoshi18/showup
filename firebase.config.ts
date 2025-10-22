@@ -7,15 +7,15 @@ import { getMessaging, Messaging, isSupported as isMessagingSupported } from 'fi
 import { getRemoteConfig, RemoteConfig } from 'firebase/remote-config'
 
 // Firebase configuration
-// Replace these with your actual Firebase config values from Firebase Console
+// These values are safe to be public - Firebase security comes from Firestore/Storage rules
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyDummyKeyForBuildTime",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyBZAcO-S8cAX23YCZ6G5HHJ4_VBycELXyA",
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "showup-e088f.firebaseapp.com",
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "showup-e088f",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "showup-e088f.appspot.com",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:123456789:web:abc123",
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-XXXXXXXXXX"
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "showup-e088f.firebasestorage.app",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "761321497235",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:761321497235:web:da6cf57a39dcb1fa0ce366",
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-TYBM19ZNF8"
 }
 
 // Initialize Firebase
