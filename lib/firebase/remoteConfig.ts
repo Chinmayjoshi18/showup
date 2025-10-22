@@ -3,6 +3,10 @@ import { remoteConfig } from '@/firebase.config'
 
 // Initialize and fetch remote config
 export async function initializeRemoteConfig(): Promise<void> {
+  if (!remoteConfig) {
+    console.warn('Remote Config not initialized')
+    return
+  }
   try {
     await fetchAndActivate(remoteConfig)
     console.log('Remote Config activated successfully')
@@ -13,6 +17,7 @@ export async function initializeRemoteConfig(): Promise<void> {
 
 // Get boolean config value
 export function getConfigBoolean(key: string): boolean {
+  if (!remoteConfig) return false
   try {
     return getBoolean(remoteConfig, key)
   } catch (error) {
@@ -23,6 +28,7 @@ export function getConfigBoolean(key: string): boolean {
 
 // Get string config value
 export function getConfigString(key: string): string {
+  if (!remoteConfig) return ''
   try {
     return getString(remoteConfig, key)
   } catch (error) {
@@ -33,6 +39,7 @@ export function getConfigString(key: string): string {
 
 // Get number config value
 export function getConfigNumber(key: string): number {
+  if (!remoteConfig) return 0
   try {
     return getNumber(remoteConfig, key)
   } catch (error) {
@@ -81,6 +88,8 @@ export function isFeatureEnabled(featureName: string): boolean {
 
 // Get all config as object
 export function getAllConfig(): { [key: string]: any } {
+  if (!remoteConfig) return {}
+  
   const keys = [
     'show_offers_banner',
     'max_booking_seats',
@@ -95,6 +104,7 @@ export function getAllConfig(): { [key: string]: any } {
   const config: { [key: string]: any } = {}
   
   keys.forEach(key => {
+    if (!remoteConfig) return
     try {
       const value = getValue(remoteConfig, key)
       config[key] = value.asString()

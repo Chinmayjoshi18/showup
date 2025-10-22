@@ -133,6 +133,25 @@ export interface WishlistItem {
   originalPrice?: number
 }
 
+export interface Booking {
+  id: string
+  eventId: string
+  userId: string
+  event: Event
+  date: string
+  time: string
+  seats: Array<{ id: string; type: string; price: number }>
+  total: number
+  status: 'confirmed' | 'pending' | 'cancelled'
+  bookingDate: string
+  paymentMethod?: string
+  paymentId?: string
+  orderId?: string
+  discount?: number
+  appliedCoupon?: string
+  qrCodeUrl?: string
+}
+
 export const events: Event[] = [
   // Movies
   {
