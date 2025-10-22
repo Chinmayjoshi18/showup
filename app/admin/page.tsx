@@ -31,7 +31,8 @@ import {
   Globe,
   Activity,
   Zap,
-  Award
+  Award,
+  LogOut
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
@@ -76,33 +77,34 @@ export default function AdminPage() {
 
   // Check admin access
   useEffect(() => {
-    const checkAdminAccess = async () => {
-      if (!loading && user) {
-        if (user.email !== ADMIN_EMAIL) {
-          router.push('/')
-          return
-        }
-        
-        try {
-          const adminStatus = await isUserAdmin(user.uid)
-          setIsAdmin(adminStatus)
-          
-          if (!adminStatus) {
-            router.push('/')
-          }
-        } catch (error) {
-          console.error('Error checking admin status:', error)
-          router.push('/')
-        } finally {
-          setCheckingAdmin(false)
-        }
-      } else if (!loading && !user) {
-        router.push('/signin')
+    const checkAdminAccess = () => {
+      // Check if admin session exists
+      const isAdmin = localStorage.getItem('isAdmin') === 'true'
+      const adminLoginTime = localStorage.getItem('adminLoginTime')
+      
+      if (!isAdmin || !adminLoginTime) {
+        router.push('/admin/login')
+        return
       }
+      
+      // Check if session is expired (24 hours)
+      const loginTime = parseInt(adminLoginTime)
+      const now = Date.now()
+      const twentyFourHours = 24 * 60 * 60 * 1000
+      
+      if (now - loginTime > twentyFourHours) {
+        localStorage.removeItem('isAdmin')
+        localStorage.removeItem('adminLoginTime')
+        router.push('/admin/login')
+        return
+      }
+      
+      setIsAdmin(true)
+      setCheckingAdmin(false)
     }
     
     checkAdminAccess()
-  }, [user, loading, router])
+  }, [router])
 
   // Load data
   useEffect(() => {
@@ -218,6 +220,14 @@ export default function AdminPage() {
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Error reviewing approval' })
+    }
+  }
+
+  const handleAdminSignOut = () => {
+    if (confirm('Are you sure you want to sign out from admin panel?')) {
+      localStorage.removeItem('isAdmin')
+      localStorage.removeItem('adminLoginTime')
+      router.push('/admin/login')
     }
   }
 
@@ -363,17 +373,26 @@ export default function AdminPage() {
             </button>
           </nav>
 
-          {/* Admin Info */}
+          {/* Admin Sign Out */}
           <div className="mt-auto pt-6 border-t border-gray-200">
-            <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
-              <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                {user?.email?.charAt(0).toUpperCase()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-gray-900 truncate">{user?.displayName || 'Admin'}</div>
-                <div className="text-xs text-gray-500 truncate">Admin Access</div>
+            <div className="px-4 py-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl mb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                  A
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold text-gray-900">Admin User</div>
+                  <div className="text-xs text-gray-500">Full Access</div>
+                </div>
               </div>
             </div>
+            <button
+              onClick={handleAdminSignOut}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </button>
           </div>
         </div>
       </div>

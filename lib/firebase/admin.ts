@@ -14,9 +14,6 @@ import {
 import { db } from '@/firebase.config'
 import { UserRole, UserProfile, OrganizerRequest, EventApproval } from '@/lib/types/roles'
 
-// Admin email - ONLY THIS EMAIL HAS ADMIN ACCESS
-export const ADMIN_EMAIL = 'chinmayjoshi1359@gmail.com'
-
 /**
  * Check if a user is an admin
  */
@@ -77,15 +74,12 @@ export async function initializeUserProfile(
     const userDoc = await getDoc(doc(db, 'users', uid))
     
     if (!userDoc.exists()) {
-      // Determine role - if email matches admin email, make them admin
-      const role: UserRole = email === ADMIN_EMAIL ? 'admin' : 'customer'
-      
       const profile: UserProfile = {
         uid,
         email,
         displayName,
         photoURL,
-        role,
+        role: 'customer',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         isActive: true

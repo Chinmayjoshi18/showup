@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { MapPin, Search, Menu, X, User, Ticket, LogOut, Shield } from 'lucide-react'
+import { MapPin, Search, Menu, X, User, Ticket, LogOut } from 'lucide-react'
 import LocationModal from './LocationModal'
 import SearchBar from './SearchBar'
 import NotificationCenter from './NotificationCenter'
 import { useAuth } from '@/contexts/AuthContext'
 import { signOut as firebaseSignOut } from '@/lib/firebase/auth'
-import { ADMIN_EMAIL } from '@/lib/firebase/admin'
 import { useRouter } from 'next/navigation'
 
 export default function Navbar() {
@@ -121,18 +120,6 @@ export default function Navbar() {
                           <p className="text-xs text-gray-500 truncate">{user.email}</p>
                         </div>
                         
-                        {/* Admin Panel Link - Only for admin */}
-                        {user.email === ADMIN_EMAIL && (
-                          <Link 
-                            href="/admin" 
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 transition border-b border-gray-100"
-                            onClick={() => setShowUserMenu(false)}
-                          >
-                            <Shield className="w-4 h-4 text-purple-600" />
-                            <span className="text-sm text-purple-600 font-semibold">Admin Panel</span>
-                          </Link>
-                        )}
-                        
                         <Link 
                           href="/profile" 
                           className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition"
@@ -203,18 +190,6 @@ export default function Navbar() {
             <Link href="/browse?category=plays" className="block py-2 text-gray-700">
               Plays & Comedy
             </Link>
-            
-            {/* Admin Panel Link - Mobile */}
-            {user && user.email === ADMIN_EMAIL && (
-              <Link 
-                href="/admin" 
-                className="flex items-center gap-2 py-2 text-purple-600 font-semibold border-t pt-3"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Shield className="w-4 h-4" />
-                Admin Panel
-              </Link>
-            )}
             
             <div className="pt-3 border-t">
               <button

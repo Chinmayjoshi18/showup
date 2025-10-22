@@ -74,10 +74,6 @@ export async function resetPassword(email: string): Promise<void> {
 async function createUserDocument(user: User): Promise<void> {
   const userRef = doc(db, 'users', user.uid)
   
-  // Check if user is admin based on email
-  const ADMIN_EMAIL = 'chinmayjoshi1359@gmail.com'
-  const role = user.email === ADMIN_EMAIL ? 'admin' : 'customer'
-  
   const userData = {
     uid: user.uid,
     email: user.email,
@@ -85,7 +81,7 @@ async function createUserDocument(user: User): Promise<void> {
     photoURL: user.photoURL || '',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    role: role,
+    role: 'customer',
     isActive: true,
     preferences: {
       city: 'Mumbai',
