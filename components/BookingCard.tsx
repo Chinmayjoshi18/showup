@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ChevronRight, Calendar as CalendarIcon, Clock } from 'lucide-react'
+import { ChevronRight, Calendar as CalendarIcon, Clock, X } from 'lucide-react'
 import { format, addDays } from 'date-fns'
 import Calendar from './Calendar'
 import TimeSlotPicker, { TimeSlot } from './TimeSlotPicker'
@@ -38,13 +38,15 @@ export default function BookingCard({ event }: BookingCardProps) {
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date)
     setShowCalendar(false)
-    setShowTimeSlots(true)
+    // Automatically show time slots after date selection
+    setTimeout(() => setShowTimeSlots(true), 300)
     // Reset time selection when date changes
     setSelectedTime(undefined)
   }
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time)
+    setShowTimeSlots(false)
   }
 
   const canProceed = selectedDate && selectedTime
@@ -172,26 +174,80 @@ export default function BookingCard({ event }: BookingCardProps) {
         </div>
       </div>
 
-      {/* Calendar Modal */}
+      {/* Calendar Modal Overlay */}
       {showCalendar && (
-        <div className="animate-slideIn">
-          <Calendar
-            selectedDate={selectedDate}
-            onSelectDate={handleDateSelect}
-            availableDates={availableDates}
-            minDate={new Date()}
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowCalendar(false)}
           />
+
+          {/* Modal Content */}
+          <div className="relative bg-white w-full sm:max-w-2xl sm:rounded-2xl rounded-t-3xl max-h-[90vh] overflow-hidden animate-slideUp sm:animate-scaleIn shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-50 to-secondary-50">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Select Date</h3>
+                <p className="text-sm text-gray-600 mt-1">Choose your preferred show date</p>
+              </div>
+              <button
+                onClick={() => setShowCalendar(false)}
+                className="p-2 hover:bg-white rounded-full transition-all"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Calendar */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-100px)]">
+              <Calendar
+                selectedDate={selectedDate}
+                onSelectDate={handleDateSelect}
+                availableDates={availableDates}
+                minDate={new Date()}
+              />
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Time Slots Modal */}
+      {/* Time Slots Modal Overlay */}
       {showTimeSlots && selectedDate && (
-        <div className="animate-slideIn">
-          <TimeSlotPicker
-            timeSlots={timeSlots}
-            selectedTime={selectedTime}
-            onSelectTime={handleTimeSelect}
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowTimeSlots(false)}
           />
+
+          {/* Modal Content */}
+          <div className="relative bg-white w-full sm:max-w-3xl sm:rounded-2xl rounded-t-3xl max-h-[90vh] overflow-hidden animate-slideUp sm:animate-scaleIn shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-50 to-secondary-50">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Select Time</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowTimeSlots(false)}
+                className="p-2 hover:bg-white rounded-full transition-all"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Time Slots */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-100px)]">
+              <TimeSlotPicker
+                timeSlots={timeSlots}
+                selectedTime={selectedTime}
+                onSelectTime={handleTimeSelect}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>
