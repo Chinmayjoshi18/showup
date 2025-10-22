@@ -1,12 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Star, MapPin, Calendar, Search, SlidersHorizontal } from 'lucide-react'
 import { searchEvents } from '@/lib/data'
 
-export default function SearchPage() {
+// Disable static generation for this page
+export const dynamic = 'force-dynamic'
+
+function SearchPageContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
   const [results, setResults] = useState<any[]>([])
@@ -253,6 +256,22 @@ export default function SearchPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+// Wrap with Suspense for useSearchParams
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading search results...</p>
+        </div>
+      </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
   )
 }
 
